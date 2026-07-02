@@ -5,8 +5,8 @@ import type { Platform, UserProfileSummary } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/Avatar";
-import { Plus, Check, ExternalLink } from "lucide-react";
-import { cn, formatFollowers } from "@/lib/utils";
+import { Plus, Check, ExternalLink, TrendingUp, Users } from "lucide-react";
+import { formatFollowers } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 import { toast } from "@/hooks/use-toast";
 
@@ -18,16 +18,17 @@ interface ProfileCardProps {
   variant?: "default" | "compact";
 }
 
-function getPlatformColor(platform: Platform) {
-  switch (platform) {
-    case "instagram":
-      return "bg-gradient-to-r from-purple-500 to-pink-500";
-    case "youtube":
-      return "bg-red-500";
-    case "tiktok":
-      return "bg-black";
-  }
-}
+const platformAccents: Record<Platform, string> = {
+  instagram: "border-pink-500/30 hover:border-pink-500/50",
+  youtube: "border-red-500/30 hover:border-red-500/50",
+  tiktok: "border-cyan-500/30 hover:border-cyan-500/50",
+};
+
+const platformBadgeColors: Record<Platform, string> = {
+  instagram: "bg-gradient-to-r from-purple-500 to-pink-500",
+  youtube: "bg-red-500",
+  tiktok: "bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400",
+};
 
 function getPlatformIcon(platform: Platform) {
   switch (platform) {
@@ -89,30 +90,30 @@ export function ProfileCard({
     return (
       <div
         onClick={handleClick}
-        className="group flex items-center gap-3 p-3 rounded-lg border border-purple-500/30 hover:bg-white/10 cursor-pointer transition-colors"
+        className="group flex items-center gap-3 p-3 rounded-xl border border-purple-500/20 hover:bg-white/10 cursor-pointer transition-all"
       >
-        <Avatar className="h-10 w-10">
+        <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
           <AvatarImage src={profile.picture} alt={profile.username} />
-          <AvatarFallback className="text-xs font-medium bg-purple-500/30 text-white">
+          <AvatarFallback className="text-xs font-bold bg-purple-500/30 text-white">
             {profile.username.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 truncate">
-            <span className="font-medium truncate text-white">@{profile.username}</span>
+            <span className="font-semibold truncate text-white">@{profile.username}</span>
             {profile.is_verified && <Badge variant="verified" className="flex-shrink-0">✓ Verified</Badge>}
           </div>
           <p className="text-sm text-gray-400 truncate">{profile.fullname}</p>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-sm text-gray-300">{formatFollowers(profile.followers)}</span>
+          <span className="text-sm text-gray-300 font-medium">{formatFollowers(profile.followers)}</span>
           <Button
             variant={isSaved ? "secondary" : "outline"}
             size="icon"
             onClick={handleAddToList}
             aria-label={isSaved ? "Remove from list" : "Add to list"}
           >
-            {isSaved ? <Check className="h-4 w-4 text-green-600" /> : <Plus className="h-4 w-4" />}
+            {isSaved ? <Check className="h-4 w-4 text-green-400" /> : <Plus className="h-4 w-4" />}
           </Button>
         </div>
       </div>
@@ -122,18 +123,18 @@ export function ProfileCard({
   return (
     <div
       onClick={handleClick}
-      className="group relative flex items-center gap-4 p-4 rounded-xl border border-purple-500/30 bg-white/5 hover:bg-white/10 hover:shadow-md hover:shadow-purple-500/20 transition-all duration-200 cursor-pointer"
+      className={`group relative flex items-center gap-4 p-4 rounded-xl border bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-200 cursor-pointer ${platformAccents[platform]}`}
       data-search={searchQuery}
     >
       <div className="relative flex-shrink-0">
-        <Avatar className="h-16 w-16">
+        <Avatar className="h-16 w-16 ring-2 ring-purple-500/20">
           <AvatarImage src={profile.picture} alt={profile.username} />
-          <AvatarFallback className="text-xl font-medium bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-white">
+          <AvatarFallback className="text-xl font-bold bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-white">
             {profile.username.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>
         {profile.is_verified && (
-          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white text-xs shadow-lg">
+          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white text-xs shadow-lg shadow-blue-500/30">
             ✓
           </span>
         )}
@@ -141,22 +142,25 @@ export function ProfileCard({
 
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <h3 className="font-semibold text-white truncate">@{profile.username}</h3>
+          <h3 className="font-bold text-white truncate font-sans">@{profile.username}</h3>
           <span
-            className={cn(
-              "inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full",
-              getPlatformColor(platform)
-            )}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 text-xs font-medium rounded-full ${platformBadgeColors[platform]}`}
           >
             <span>{getPlatformIcon(platform)}</span>
             <span className="text-white capitalize">{platform}</span>
           </span>
         </div>
-        <p className="mt-1 text-gray-300 truncate">{profile.fullname}</p>
-        <div className="mt-2 flex items-center gap-4 text-sm text-gray-400">
-          <span className="font-medium text-purple-300">{formatFollowers(profile.followers)}</span>
+        <p className="mt-1 text-gray-300 truncate font-body">{profile.fullname}</p>
+        <div className="mt-2 flex items-center gap-4 text-sm text-gray-400 font-body">
+          <span className="flex items-center gap-1">
+            <Users className="h-3.5 w-3.5 text-purple-400" />
+            <span className="font-semibold text-purple-300">{formatFollowers(profile.followers)}</span>
+          </span>
           {profile.engagement_rate && (
-            <span>ER: {(profile.engagement_rate * 100).toFixed(2)}%</span>
+            <span className="flex items-center gap-1">
+              <TrendingUp className="h-3.5 w-3.5 text-pink-400" />
+              <span>ER: {(profile.engagement_rate * 100).toFixed(2)}%</span>
+            </span>
           )}
         </div>
       </div>
@@ -165,7 +169,7 @@ export function ProfileCard({
         <Button
           variant={isSaved ? "secondary" : "outline"}
           onClick={handleAddToList}
-          className="gap-2"
+          className="gap-2 font-body"
           aria-label={isSaved ? "Remove from list" : "Add to list"}
         >
           {isSaved ? (

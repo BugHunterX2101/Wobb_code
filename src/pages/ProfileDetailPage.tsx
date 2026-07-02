@@ -6,10 +6,10 @@ import { Layout } from "@/components/Layout";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
-import { formatFollowers, formatEngagementRate } from "@/utils/formatters";
+import { formatFollowers, formatEngagementRate } from "@/lib/utils";
 import { loadProfileByUsername } from "@/utils/profileLoader";
 import { useAppStore } from "@/store/useAppStore";
-import { Plus, Check, ExternalLink, ArrowLeft } from "lucide-react";
+import { Plus, Check, ExternalLink, ArrowLeft, Users, TrendingUp, Eye, Heart, MessageCircle, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
 import type { FullUserProfile, ProfileDetailResponse, Platform } from "@/types";
@@ -21,7 +21,7 @@ function getPlatformColor(platform: Platform) {
     case "youtube":
       return "bg-red-500";
     case "tiktok":
-      return "bg-black";
+      return "bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400";
   }
 }
 
@@ -36,10 +36,16 @@ function getPlatformIcon(platform: Platform) {
   }
 }
 
+const platformGradients: Record<Platform, string> = {
+  instagram: "from-purple-500/20 via-pink-500/20 to-purple-500/20",
+  youtube: "from-red-500/20 via-orange-500/20 to-red-500/20",
+  tiktok: "from-cyan-500/20 via-purple-500/20 to-pink-500/20",
+};
+
 export function ProfileDetailPage() {
   const { username } = useParams<{ username: string }>();
   const [searchParams] = useSearchParams();
-  const platform = (searchParams.get("platform") || "unknown") as Platform;
+  const platform = (searchParams.get("platform") || "instagram") as Platform;
   const [profileData, setProfileData] = useState<ProfileDetailResponse | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -129,24 +135,24 @@ export function ProfileDetailPage() {
       <div className="max-w-4xl mx-auto">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-6 transition-colors"
+          className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-6 transition-colors font-body"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to search
         </Link>
 
-        <div className="bg-white/5 rounded-2xl border border-purple-500/30 overflow-hidden">
-          <div className="bg-gradient-to-r from-purple-500/20 to-pink-500/20 p-8">
+        <div className={`rounded-2xl border border-purple-500/20 bg-white/5 backdrop-blur-xl overflow-hidden shadow-2xl shadow-purple-500/10`}>
+          <div className={`bg-gradient-to-r p-8 ${platformGradients[platform]}`}>
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6 max-w-4xl mx-auto">
               <div className="relative flex-shrink-0">
-                <Avatar className="h-28 w-28">
+                <Avatar className="h-28 w-28 ring-4 ring-purple-500/30 shadow-xl shadow-purple-500/20">
                   <AvatarImage src={user.picture} alt={user.fullname} />
-                  <AvatarFallback className="text-3xl font-medium bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-white">
+                  <AvatarFallback className="text-3xl font-bold bg-gradient-to-br from-purple-500/30 to-pink-500/30 text-white">
                     {user.username.charAt(0).toUpperCase()}
                   </AvatarFallback>
                 </Avatar>
                 {user.is_verified && (
-                  <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white text-sm shadow-lg">
+                  <span className="absolute -bottom-1 -right-1 flex h-8 w-8 items-center justify-center rounded-full bg-blue-500 text-white text-sm shadow-lg shadow-blue-500/30">
                     ✓
                   </span>
                 )}
@@ -154,14 +160,14 @@ export function ProfileDetailPage() {
 
               <div className="flex-1 text-center md:text-left">
                 <div className="flex items-center justify-center md:justify-start gap-2 flex-wrap mb-2">
-                  <h2 className="text-2xl font-bold text-white">@{user.username}</h2>
+                  <h2 className="text-2xl md:text-3xl font-bold text-white font-sans">@{user.username}</h2>
                   {user.is_verified && (
                     <Badge variant="verified" className="flex items-center gap-1">
                       ✓ Verified
                     </Badge>
                   )}
                 </div>
-                <p className="text-gray-300 text-lg">{user.fullname}</p>
+                <p className="text-gray-300 text-lg font-body">{user.fullname}</p>
                 <div className="mt-3 flex items-center justify-center md:justify-start gap-3">
                   <span
                     className={cn(
@@ -176,7 +182,7 @@ export function ProfileDetailPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="border-purple-500/30 hover:bg-white/10"
+                      className="border-purple-500/30 hover:bg-white/10 font-body"
                       onClick={(e) => {
                         e.preventDefault();
                         window.open(user.url, "_blank", "noopener,noreferrer");
@@ -193,9 +199,9 @@ export function ProfileDetailPage() {
 
           <div className="p-8">
             {user.description && (
-              <div className="mb-8 p-6 bg-white/5 rounded-xl border border-purple-500/20">
-                <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wider mb-2">Bio</h3>
-                <p className="text-gray-300 leading-relaxed">{user.description}</p>
+              <div className="mb-8 p-6 bg-white/5 rounded-xl border border-purple-500/10">
+                <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wider mb-2 font-sans">Bio</h3>
+                <p className="text-gray-300 leading-relaxed font-body">{user.description}</p>
               </div>
             )}
 
@@ -203,41 +209,41 @@ export function ProfileDetailPage() {
               <StatCard
                 label="Followers"
                 value={formatFollowers(user.followers)}
-                icon="👥"
+                icon={<Users className="h-5 w-5 text-purple-400" />}
               />
               {user.engagement_rate !== undefined && (
                 <StatCard
                   label="Engagement Rate"
                   value={formatEngagementRate(user.engagement_rate)}
-                  icon="📊"
+                  icon={<TrendingUp className="h-5 w-5 text-pink-400" />}
                 />
               )}
               {user.posts_count !== undefined && (
                 <StatCard
                   label="Posts"
                   value={formatNumber(user.posts_count)}
-                  icon="📝"
+                  icon={<FileText className="h-5 w-5 text-blue-400" />}
                 />
               )}
               {user.avg_views !== undefined && user.avg_views > 0 && (
                 <StatCard
                   label="Avg Views"
                   value={formatFollowers(user.avg_views)}
-                  icon="👁️"
+                  icon={<Eye className="h-5 w-5 text-cyan-400" />}
                 />
               )}
               {user.avg_likes !== undefined && (
                 <StatCard
                   label="Avg Likes"
                   value={formatFollowers(user.avg_likes)}
-                  icon="❤️"
+                  icon={<Heart className="h-5 w-5 text-red-400" />}
                 />
               )}
               {user.avg_comments !== undefined && (
                 <StatCard
                   label="Avg Comments"
                   value={formatNumber(user.avg_comments)}
-                  icon="💬"
+                  icon={<MessageCircle className="h-5 w-5 text-green-400" />}
                 />
               )}
             </div>
@@ -246,7 +252,7 @@ export function ProfileDetailPage() {
               <Button
                 onClick={handleAddToList}
                 className={cn(
-                  "w-full gap-2",
+                  "w-full gap-2 font-body",
                   isSaved ? "bg-green-600 hover:bg-green-700" : "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
                 )}
                 size="lg"
@@ -271,12 +277,12 @@ export function ProfileDetailPage() {
   );
 }
 
-function StatCard({ label, value, icon }: { label: string; value: string; icon: string }) {
+function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="bg-white/5 border border-purple-500/30 rounded-xl p-5 text-center">
-      <span className="text-2xl mb-2 block">{icon}</span>
-      <div className="text-2xl font-bold text-white">{value}</div>
-      <div className="text-sm text-gray-400 mt-1">{label}</div>
+    <div className="bg-white/5 border border-purple-500/20 rounded-xl p-5 text-center hover:bg-white/10 transition-colors">
+      <div className="flex justify-center mb-2">{icon}</div>
+      <div className="text-xl md:text-2xl font-bold text-white font-sans">{value}</div>
+      <div className="text-sm text-gray-400 mt-1 font-body">{label}</div>
     </div>
   );
 }

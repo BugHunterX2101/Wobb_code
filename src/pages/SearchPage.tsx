@@ -1,43 +1,61 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { useLocation } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { PlatformFilter } from "@/components/PlatformFilter";
 import { ProfileList } from "@/components/ProfileList";
 import { extractProfiles, filterProfiles } from "@/utils/dataHelpers";
 import type { Platform } from "@/types";
 
+const platformIcons: Record<Platform, string> = {
+  instagram: "📷",
+  youtube: "▶️",
+  tiktok: "🎵",
+};
+
+const platformDescriptions: Record<Platform, string> = {
+  instagram: "Discover top Instagram creators — from fashion to fitness, lifestyle to luxury.",
+  youtube: "Find YouTube giants — vloggers, gamers, educators, and entertainment stars.",
+  tiktok: "Explore TikTok sensations — viral trends, challenges, and creative content.",
+};
+
+function routeToPlatform(pathname: string): Platform {
+  if (pathname === "/youtube") return "youtube";
+  if (pathname === "/tiktok") return "tiktok";
+  return "instagram";
+}
+
 export function SearchPage() {
-  const [platform, setPlatform] = useState<Platform>("instagram");
+  const location = useLocation();
+  const platform = routeToPlatform(location.pathname);
+
   const [searchQuery, setSearchQuery] = useState("");
 
   const allProfiles = useMemo(() => extractProfiles(platform), [platform]);
   const filtered = useMemo(() => filterProfiles(allProfiles, searchQuery), [allProfiles, searchQuery]);
 
-  const handlePlatformChange = (p: Platform) => {
-    setPlatform(p);
-    setSearchQuery("");
-  };
+  const title = `Top ${platform.charAt(0).toUpperCase() + platform.slice(1)} Creators`;
 
   return (
-    <Layout title="Find Influencers">
+    <Layout title={title}>
       <div className="max-w-4xl mx-auto">
-        <p className="text-gray-300 mb-8 text-center">
-          Browse top creators across social platforms
-        </p>
+        <div className="flex items-center gap-3 mb-6">
+          <span className="text-3xl">{platformIcons[platform]}</span>
+          <p className="text-gray-300 font-body leading-relaxed">
+            {platformDescriptions[platform]}
+          </p>
+        </div>
 
         <PlatformFilter
-          selected={platform}
-          onChange={handlePlatformChange}
           searchQuery={searchQuery}
           onSearchChange={setSearchQuery}
         />
 
-        <div className="mb-4 flex items-center justify-between">
-          <p className="text-sm text-gray-400">
-            Showing <span className="font-medium text-white">{filtered.length}</span> of{" "}
-            <span className="font-medium text-white">{allProfiles.length}</span> on{" "}
-            <span className="capitalize font-medium text-purple-300">{platform}</span>
+        <div className="mb-4 flex items-center justify-between mt-6">
+          <p className="text-sm text-gray-400 font-body">
+            Showing <span className="font-semibold text-white">{filtered.length}</span> of{" "}
+            <span className="font-semibold text-white">{allProfiles.length}</span> creators
           </p>
         </div>
 

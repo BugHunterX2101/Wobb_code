@@ -1,5 +1,6 @@
 import type { Platform, UserProfileSummary } from "@/types";
 import { ProfileCard } from "./ProfileCard";
+import { Users } from "lucide-react";
 
 interface ProfileListProps {
   profiles: UserProfileSummary[];
@@ -17,22 +18,10 @@ export function ProfileList({
   return (
     <div className="w-full max-w-3xl mx-auto space-y-3">
       {profiles.length === 0 ? (
-        <div className="text-center py-12">
-          <svg
-            className="mx-auto h-12 w-12 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.5}
-              d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <h3 className="mt-2 text-lg font-medium text-white">No profiles found</h3>
-          <p className="mt-1 text-sm text-gray-400">
+        <div className="text-center py-16">
+          <Users className="mx-auto h-12 w-12 text-gray-500 mb-4" />
+          <h3 className="mt-2 text-lg font-semibold text-white font-sans">No creators found</h3>
+          <p className="mt-1 text-sm text-gray-400 font-body">
             {searchQuery
               ? `No results for "${searchQuery}". Try a different search term.`
               : "No profiles available for this platform."}

@@ -6,6 +6,8 @@ function App() {
   return (
     <Routes>
       <Route path="/" element={<SearchPage />} />
+      <Route path="/youtube" element={<SearchPage />} />
+      <Route path="/tiktok" element={<SearchPage />} />
       <Route path="/profile/:username" element={<ProfileDetailPage />} />
     </Routes>
   );
