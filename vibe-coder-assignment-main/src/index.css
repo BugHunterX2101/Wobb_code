@@ -6,7 +6,7 @@
   --color-secondary: #f3f4f6;
   --color-secondary-foreground: #1f2937;
   --color-accent: #f3f4f6;
-  --color-accent-foreground: #1f #1f2937;
+  --color-accent-foreground: #1f2937;
   --color-destructive: #ef4444;
   --color-destructive-foreground: #ffffff;
   --color-muted: #f3f4f6;
@@ -32,20 +32,8 @@
 }
 
 @layer utilities {
-  .animate-in {
-    animation: animateIn 0.3s ease-out;
-  }
-  .animate-out {
-    animation: animateOut 0.3s ease-in;
-  }
-  @keyframes animateIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-  @keyframes animateOut {
-    from { opacity: 1; transform: translateY(0); }
-    to { opacity: 0; transform: translateY(-10px); }
-  }
+  .animate-in { animation: animateIn 0.3s ease-out; }
+  .animate-out { animation: animateOut 0.3s ease-in; }
   .fade-in-0 { animation: fadeIn 0.2s ease-out; }
   .fade-out-80 { animation: fadeOut 0.2s ease-in; }
   .zoom-in-95 { animation: zoomIn 0.2s ease-out; }
@@ -54,34 +42,43 @@
   .slide-in-from-bottom-2 { animation: slideInBottom 0.2s ease-out; }
   .slide-in-from-left-2 { animation: slideInLeft 0.2s ease-out; }
   .slide-in-from-right-2 { animation: slideInRight 0.2s ease-out; }
-  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-  @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-  @keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-  @keyframes zoomOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
-  @keyframes slideInTop { from { opacity: 0; transform: translateY(-0.5rem); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideInBottom { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: translateY(0); } }
-  @keyframes slideInLeft { from { opacity: 0; transform: translateX(-0.5rem); } to { opacity: 1; transform: translateX(0); } }
-  @keyframes slideInRight { from { opacity: 0; transform: translateX(0.5rem); } to { opacity: 1; transform: translateX(0); } }
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-primary: #c084fc;
-    --color-primary-foreground: #1f2937;
-    --color-secondary: #374151;
-    --color-secondary-foreground: #f3f4f6;
-    --color-accent: #374151;
-    --color-accent-foreground: #f3f4f6;
-    --color-destructive: #f87171;
-    --color-destructive-foreground: #1f2937;
-    --color-muted: #374151;
-    --color-muted-foreground: #9ca3af;
-    --color-background: #111827;
-    --color-foreground: #f3f4f6;
-    --color-border: #374151;
-    --color-input: #374151;
-    --color-ring: #c084fc;
-    --color-success: #4ade80;
-    --color-success-foreground: #1f2937;
-  }
+@keyframes animateIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes animateOut {
+  from { opacity: 1; transform: translateY(0); }
+  to { opacity: 0; transform: translateY(-10px); }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+@keyframes zoomIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+@keyframes zoomOut { from { opacity: 1; transform: scale(1); } to { opacity: 0; transform: scale(0.95); } }
+@keyframes slideInTop { from { opacity: 0; transform: translateY(-0.5rem); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInBottom { from { opacity: 0; transform: translateY(0.5rem); } to { opacity: 1; transform: translateY(0); } }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-0.5rem); } to { opacity: 1; transform: translateX(0); } }
+@keyframes slideInRight { from { opacity: 0; transform: translateX(0.5rem); } to { opacity: 1; transform: translateX(0); } }
+
+@keyframes floatUp {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.7; }
+  90% { opacity: 0.7; }
+  100% { transform: translateY(-120vh) rotate(15deg); opacity: 0; }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.8); }
+}
+
+@keyframes spinSlow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
 }

@@ -1,80 +1,83 @@
-# Wobb Frontend Assignment
+---
+title: Wobb Influencer Search
+emoji: 🔍
+colorFrom: pink
+colorTo: purple
+sdk: docker
+pinned: false
+---
 
-A starter influencer search application built with **React**, **TypeScript**, **Vite**, and **Tailwind CSS**. This project is intentionally left in a rough-but-working state for candidates to improve.
+# Wobb Influencer Search
+
+A modern, full-stack influencer search platform built with React, TypeScript, Vite, Zustand, and Tailwind CSS. Features a stunning 3D animated background with glass-morphism UI, persistent profile saving, and cross-platform search across Instagram, YouTube, and TikTok.
+
+## Features
+
+- **3D Animated Background** — Floating platform orbs, hearts, sparkles, and stars using Three.js + React Three Fiber
+- **Glass-morphism UI** — Frosted glass panels, gradient text, and smooth animations
+- **Cross-platform Search** — Filter influencers across Instagram, YouTube, and TikTok
+- **Profile Details** — View extended stats, engagement rates, and bio
+- **Save Profiles** — Add/remove profiles to a persistent list (Zustand + localStorage)
+- **Responsive Design** — Mobile-first, works on all screen sizes
+
+## Live Demo
+
+👉 https://huggingface.co/spaces/vedit2101/wobb-influencer-search
+
+## Tech Stack
+
+- **Frontend:** React 19, TypeScript, Vite
+- **State:** Zustand (persisted to localStorage)
+- **Styling:** Tailwind CSS v4, CSS Variables
+- **3D:** @react-three/fiber, @react-three/drei, Three.js
+- **UI Components:** Radix UI primitives
+- **Icons:** Lucide React
+- **Notifications:** Custom toast system
 
 ## Getting Started
 
 ```bash
+# Install dependencies
 npm install
+
+# Development server
 npm run dev
+
+# Production build
+npm run build
+
+# Lint
+npm run lint
 ```
 
-Open [http://localhost:5173](http://localhost:5173) to view the app.
+Open http://localhost:5173
 
-## What's Included
+## Project Structure
 
-- **Search / Dashboard** — filter influencers by platform (Instagram, YouTube, TikTok) and search by username or full name
-- **Profile Details** — click a profile to view extended data loaded from individual JSON files
-- **Routing** — `react-router-dom` with `/` (search) and `/profile/:username` (details)
+```
+src/
+├── components/         # React components
+│   ├── ui/            # Reusable UI primitives (Button, Avatar, Badge, etc.)
+│   ├── Background3D.tsx    # 3D animated background
+│   ├── Layout.tsx          # Main layout with header & saved profiles
+│   ├── PlatformFilter.tsx  # Platform tabs + search
+│   ├── ProfileCard.tsx     # Influencer card with "Add to List"
+│   ├── ProfileList.tsx     # List of profile cards
+│   ├── SavedProfilesPanel.tsx # Dropdown panel for saved profiles
+│   └── SearchBar.tsx
+├── pages/
+│   ├── SearchPage.tsx      # Main search & browse view
+│   └── ProfileDetailPage.tsx # Detailed profile view
+├── store/
+│   └── useAppStore.ts      # Zustand store with persistence
+├── utils/
+│   ├── dataHelpers.ts      # Platform data loading & filtering
+│   ├── formatters.ts       # Number formatting (followers, engagement)
+│   └── profileLoader.ts    # Dynamic profile JSON loading
+├── lib/utils.ts            # cn() classname utility
+└── hooks/use-toast.ts      # Toast notification system
+```
 
-Sample data lives in:
+## Deployment
 
-- `src/assets/data/search/` — platform search results (10 profiles each)
-- `src/assets/data/profiles/` — detailed profile JSON per username
-
-## How to Submit
-
-1. **Download or clone** this starter project to your machine.
-2. **Create a new repository** on your own GitHub account. Do not fork the original assignment repo — push your work to a repo you own.
-3. Complete the tasks below and push your changes to that repository.
-4. **Share the public GitHub repository URL** with us as your submission.
-
-### Deadline (strict)
-
-- **Due:** **2 July 2026, 2:00 PM IST** (Indian Standard Time, UTC+5:30)
-- **Any git commits made after this deadline will disqualify your submission.** We will only consider the repository state as of the deadline; late commits will not be reviewed.
-- Make sure your final work is pushed **before** the cutoff.
-
-## AI Usage
-
-You may use any AI tools (Cursor, ChatGPT, Claude, GitHub Copilot, etc.). We are evaluating your final solution and engineering decisions.
-
-## Your Tasks
-
-Complete the following as part of your submission:
-
-1. **Find and fix all bugs and quality issues** — the codebase contains intentional bugs and quality issues. Identify and resolve them.
-
-2. **Completely redesign the UI/UX** — replace the basic layout with a polished, modern interface. Focus on usability, visual hierarchy, and delight.
-
-3. **Replace React Context with Zustand** — when you implement state management for the selected list, use [Zustand](https://github.com/pmndrs/zustand) instead of React Context.
-
-4. **Implement "Select profile & Add to List"** — the disabled "Add to List" button is a stub. Build the full feature:
-   - Select / add profiles to a persistent list
-   - View and manage the selected list
-   - Handle duplicates appropriately
-
-5. **Improve code quality and project structure** — refactor as needed, add proper types, and follow React best practices.
-
-6. **Optimize performance** — apply sensible optimizations where appropriate.
-
-7. **Use any libraries you need** — you are not limited to the current stack. Choose tools that help you deliver a great result (UI kits, state managers, testing libraries, etc.).
-
-## Scripts
-
-| Command        | Description              |
-| -------------- | ------------------------ |
-| `npm run dev`  | Start development server |
-| `npm run build`| Production build         |
-| `npm run lint` | Run ESLint               |
-
-## Submission Notes
-
-- Document any assumptions or trade-offs in your README
-- Ensure `npm run build` passes before submitting
-- Focus on demonstrating your judgment — not every possible feature needs to be built, but the core assignment items should be addressed thoughtfully
-- Double-check that your repo is public (or that we have access) and that the link is included in your submission
-- Please make meaningful commits throughout your work. We may review your commit history.
-- **Bonus:** Deploying the app (e.g. Vercel, Netlify, GitHub Pages) is optional but will be considered a plus — include the live URL in your submission if you do
-
-Good luck!
+Built for Hugging Face Spaces (Docker SDK). The Dockerfile builds the Vite app and serves via Nginx on port 7860.
