@@ -12,13 +12,7 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { useAppStore } from "@/store/useAppStore";
 import { formatFollowers } from "@/lib/utils";
-import type { Platform } from "@/types";
-
-const platformIcons: Record<Platform, string> = {
-  instagram: "📷",
-  youtube: "▶️",
-  tiktok: "🎵",
-};
+import { getPlatformIcon } from "./PlatformIcons";
 
 export function SavedProfilesPanel() {
   const { savedProfiles, removeProfile, getSavedProfilesCount } = useAppStore();
@@ -81,8 +75,8 @@ export function SavedProfilesPanel() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
                     <span className="font-semibold text-sm truncate text-white font-sans">@{profile.username}</span>
-                    <Badge variant="verified" className="text-xs">
-                      {platformIcons[profile.platform]}
+                    <Badge variant="verified" className="text-xs px-1.5">
+                      {getPlatformIcon(profile.platform, 12)}
                     </Badge>
                     {profile.is_verified && (
                       <Badge variant="verified" className="text-xs">

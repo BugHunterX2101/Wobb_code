@@ -26,12 +26,26 @@ interface Orb {
   rotationSpeed: number;
 }
 
+interface GeoShape {
+  x: number;
+  y: number;
+  vx: number;
+  vy: number;
+  size: number;
+  type: "hexagon" | "triangle" | "diamond" | "cross";
+  hue: number;
+  rotation: number;
+  rotSpeed: number;
+  opacity: number;
+}
+
 export function Background3D() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const mouseRef = useRef({ x: 0, y: 0 });
   const frameRef = useRef(0);
   const particlesRef = useRef<Particle[]>([]);
   const orbsRef = useRef<Orb[]>([]);
+  const shapesRef = useRef<GeoShape[]>([]);
   const [mounted, setMounted] = useState(false);
 
   const initParticles = useCallback((width: number, height: number) => {
@@ -66,6 +80,24 @@ export function Background3D() {
       });
     }
     orbsRef.current = orbs;
+
+    const shapes: GeoShape[] = [];
+    const types: GeoShape["type"][] = ["hexagon", "triangle", "diamond", "cross"];
+    for (let i = 0; i < 16; i++) {
+      shapes.push({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3 - 0.15,
+        size: Math.random() * 20 + 10,
+        type: types[i % types.length],
+        hue: [280, 320, 260, 300, 340, 270, 290, 310][i % 8],
+        rotation: Math.random() * 360,
+        rotSpeed: (Math.random() - 0.5) * 0.8,
+        opacity: Math.random() * 0.15 + 0.05,
+      });
+    }
+    shapesRef.current = shapes;
   }, []);
 
   useEffect(() => {
@@ -229,6 +261,84 @@ export function Background3D() {
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         ctx.fill();
+        ctx.restore();
+      });
+
+      // --- Geometric symbols ---
+      shapesRef.current.forEach((s) => {
+        s.x += s.vx;
+        s.y += s.vy;
+        s.rotation += s.rotSpeed;
+
+        if (s.x < -50) s.x = w + 50;
+        if (s.x > w + 50) s.x = -50;
+        if (s.y < -50) s.y = h + 50;
+        if (s.y > h + 50) s.y = -50;
+
+        const hoverDist = 200;
+        const dx = s.x - mx;
+        const dy = s.y - my;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const repel = dist < hoverDist && dist > 0 ? (hoverDist - dist) / hoverDist : 0;
+        const px = s.x + (dx / dist) * repel * 30 || s.x;
+        const py = s.y + (dy / dist) * repel * 30 || s.y;
+
+        ctx.save();
+        ctx.translate(px, py);
+        ctx.rotate((s.rotation * Math.PI) / 180);
+        ctx.strokeStyle = `hsla(${s.hue}, 70%, 65%, ${s.opacity + repel * 0.1})`;
+        ctx.lineWidth = 1.5;
+        ctx.shadowColor = `hsla(${s.hue}, 80%, 60%, 0.3)`;
+        ctx.shadowBlur = 8;
+
+        const sz = s.size;
+        const half = sz / 2;
+
+        if (s.type === "hexagon") {
+          ctx.beginPath();
+          for (let i = 0; i < 6; i++) {
+            const angle = (i * Math.PI * 2) / 6 - Math.PI / 6;
+            const hx = Math.cos(angle) * half;
+            const hy = Math.sin(angle) * half;
+            if (i === 0) ctx.moveTo(hx, hy);
+            else ctx.lineTo(hx, hy);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fillStyle = `hsla(${s.hue}, 70%, 60%, ${s.opacity * 0.3})`;
+          ctx.fill();
+        } else if (s.type === "triangle") {
+          ctx.beginPath();
+          for (let i = 0; i < 3; i++) {
+            const angle = (i * Math.PI * 2) / 3 - Math.PI / 2;
+            const tx = Math.cos(angle) * half;
+            const ty = Math.sin(angle) * half;
+            if (i === 0) ctx.moveTo(tx, ty);
+            else ctx.lineTo(tx, ty);
+          }
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fillStyle = `hsla(${s.hue}, 70%, 60%, ${s.opacity * 0.3})`;
+          ctx.fill();
+        } else if (s.type === "diamond") {
+          ctx.beginPath();
+          ctx.moveTo(0, -half);
+          ctx.lineTo(half, 0);
+          ctx.lineTo(0, half);
+          ctx.lineTo(-half, 0);
+          ctx.closePath();
+          ctx.stroke();
+          ctx.fillStyle = `hsla(${s.hue}, 70%, 60%, ${s.opacity * 0.3})`;
+          ctx.fill();
+        } else if (s.type === "cross") {
+          const cw = sz * 0.3;
+          ctx.strokeRect(-cw, -half, cw * 2, sz);
+          ctx.strokeRect(-half, -cw, sz, cw * 2);
+          ctx.fillStyle = `hsla(${s.hue}, 70%, 60%, ${s.opacity * 0.2})`;
+          ctx.fillRect(-cw, -half, cw * 2, sz);
+          ctx.fillRect(-half, -cw, sz, cw * 2);
+        }
+
         ctx.restore();
       });
 

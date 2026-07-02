@@ -13,6 +13,7 @@ import { useAppStore } from "@/store/useAppStore";
 import { Plus, Check, ExternalLink, ArrowLeft, Users, TrendingUp, Eye, Heart, MessageCircle, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "@/hooks/use-toast";
+import { getPlatformIconWhite } from "@/components/PlatformIcons";
 import type { FullUserProfile, ProfileDetailResponse, Platform } from "@/types";
 
 function getPlatformColor(platform: Platform) {
@@ -23,17 +24,6 @@ function getPlatformColor(platform: Platform) {
       return "bg-red-500";
     case "tiktok":
       return "bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400";
-  }
-}
-
-function getPlatformIcon(platform: Platform) {
-  switch (platform) {
-    case "instagram":
-      return "📷";
-    case "youtube":
-      return "▶️";
-    case "tiktok":
-      return "🎵";
   }
 }
 
@@ -49,6 +39,8 @@ export function ProfileDetailPage() {
   const platform = (searchParams.get("platform") || "instagram") as Platform;
   const [profileData, setProfileData] = useState<ProfileDetailResponse | null>(null);
   const [loaded, setLoaded] = useState(false);
+
+  const backRoute = platform === "instagram" ? "/" : `/${platform}`;
 
   const { addProfile, removeProfile, isProfileSaved } = useAppStore();
   const isSaved = username ? isProfileSaved(username) : false;
@@ -95,7 +87,7 @@ export function ProfileDetailPage() {
       <Layout>
         <div className="text-center py-12">
           <p className="text-gray-400">Invalid profile</p>
-          <Link to="/" className="text-purple-400 hover:text-purple-300 hover:underline mt-4 inline-block">
+          <Link to={backRoute} className="text-purple-400 hover:text-purple-300 hover:underline mt-4 inline-block">
             Back to search
           </Link>
         </div>
@@ -121,7 +113,7 @@ export function ProfileDetailPage() {
       <Layout title={`@${username}`}>
         <div className="text-center py-12">
           <p className="text-red-400 mb-4">Could not load profile details for @{username}</p>
-          <Link to="/" className="text-purple-400 hover:text-purple-300 hover:underline">
+          <Link to={backRoute} className="text-purple-400 hover:text-purple-300 hover:underline">
             Back to search
           </Link>
         </div>
@@ -135,7 +127,7 @@ export function ProfileDetailPage() {
     <Layout title={user.fullname} showSavedProfiles={true}>
       <div className="max-w-4xl mx-auto">
         <Link
-          to="/"
+          to={backRoute}
           className="inline-flex items-center gap-2 text-sm text-gray-400 hover:text-white mb-6 transition-colors font-body"
         >
           <ArrowLeft className="h-4 w-4" />
@@ -176,7 +168,7 @@ export function ProfileDetailPage() {
                       getPlatformColor(platform)
                     )}
                   >
-                    <span>{getPlatformIcon(platform)}</span>
+                    <span>{getPlatformIconWhite(platform, 14)}</span>
                     <span className="capitalize">{platform}</span>
                   </span>
                   {user.url && (

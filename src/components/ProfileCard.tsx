@@ -10,6 +10,7 @@ import { Plus, Check, ExternalLink, TrendingUp, Users } from "lucide-react";
 import { formatFollowers } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
 import { toast } from "@/hooks/use-toast";
+import { getPlatformIconWhite } from "./PlatformIcons";
 
 interface ProfileCardProps {
   profile: UserProfileSummary;
@@ -39,14 +40,7 @@ const platformShadowColors: Record<Platform, string> = {
 };
 
 function getPlatformIcon(platform: Platform) {
-  switch (platform) {
-    case "instagram":
-      return "📷";
-    case "youtube":
-      return "▶️";
-    case "tiktok":
-      return "🎵";
-  }
+  return getPlatformIconWhite(platform, 12);
 }
 
 const cardVariants = {

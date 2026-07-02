@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { SavedProfilesPanel } from "./SavedProfilesPanel";
 import { Background3D } from "./Background3D";
 import { Floating3DElements } from "./Floating3DElements";
+import { getPlatformIcon } from "./PlatformIcons";
 
 interface LayoutProps {
   children: ReactNode;
@@ -12,9 +13,9 @@ interface LayoutProps {
 }
 
 const platforms = [
-  { path: "/", label: "Instagram", icon: "📷" },
-  { path: "/youtube", label: "YouTube", icon: "▶️" },
-  { path: "/tiktok", label: "TikTok", icon: "🎵" },
+  { path: "/", label: "Instagram", platform: "instagram" as const },
+  { path: "/youtube", label: "YouTube", platform: "youtube" as const },
+  { path: "/tiktok", label: "TikTok", platform: "tiktok" as const },
 ];
 
 const pageVariants = {
@@ -69,7 +70,7 @@ export function Layout({ children, title, showSavedProfiles = true }: LayoutProp
                           />
                         )}
                         <span className="relative z-10 flex items-center gap-1.5">
-                          <span>{p.icon}</span>
+                          {getPlatformIcon(p.platform, 16)}
                           <span>{p.label}</span>
                         </span>
                       </motion.span>
@@ -101,7 +102,7 @@ export function Layout({ children, title, showSavedProfiles = true }: LayoutProp
                         : "text-gray-400"
                     }`}
                   >
-                    <span>{p.icon}</span>
+                    {getPlatformIcon(p.platform, 14)}
                     <span>{p.label}</span>
                   </Link>
                 );
