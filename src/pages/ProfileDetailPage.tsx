@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Link, useParams, useSearchParams } from "react-router-dom";
+import { motion } from "framer-motion";
 import { Layout } from "@/components/Layout";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/Avatar";
 import { Badge } from "@/components/ui/Badge";
@@ -199,13 +200,23 @@ export function ProfileDetailPage() {
 
           <div className="p-8">
             {user.description && (
-              <div className="mb-8 p-6 bg-white/5 rounded-xl border border-purple-500/10">
+              <motion.div
+                className="mb-8 p-6 bg-white/5 rounded-xl border border-purple-500/10"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+              >
                 <h3 className="text-sm font-semibold text-purple-300 uppercase tracking-wider mb-2 font-sans">Bio</h3>
                 <p className="text-gray-300 leading-relaxed font-body">{user.description}</p>
-              </div>
+              </motion.div>
             )}
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+            <motion.div
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, staggerChildren: 0.1 }}
+            >
               <StatCard
                 label="Followers"
                 value={formatFollowers(user.followers)}
@@ -246,9 +257,14 @@ export function ProfileDetailPage() {
                   icon={<MessageCircle className="h-5 w-5 text-green-400" />}
                 />
               )}
-            </div>
+            </motion.div>
 
-            <div className="pt-6 border-t border-purple-500/20">
+            <motion.div
+              className="pt-6 border-t border-purple-500/20"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.3, duration: 0.4 }}
+            >
               <Button
                 onClick={handleAddToList}
                 className={cn(
@@ -269,7 +285,7 @@ export function ProfileDetailPage() {
                   </>
                 )}
               </Button>
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
@@ -279,11 +295,17 @@ export function ProfileDetailPage() {
 
 function StatCard({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="bg-white/5 border border-purple-500/20 rounded-xl p-5 text-center hover:bg-white/10 transition-colors">
+    <motion.div
+      className="bg-white/5 border border-purple-500/20 rounded-xl p-5 text-center hover:bg-white/10 transition-colors"
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ duration: 0.3 }}
+      whileHover={{ y: -4, boxShadow: "0 8px 30px rgba(168, 85, 247, 0.15)" }}
+    >
       <div className="flex justify-center mb-2">{icon}</div>
       <div className="text-xl md:text-2xl font-bold text-white font-sans">{value}</div>
       <div className="text-sm text-gray-400 mt-1 font-body">{label}</div>
-    </div>
+    </motion.div>
   );
 }
 

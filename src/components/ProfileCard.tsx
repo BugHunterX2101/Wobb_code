@@ -1,6 +1,7 @@
 "use client";
 
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import type { Platform, UserProfileSummary } from "@/types";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -16,6 +17,7 @@ interface ProfileCardProps {
   searchQuery: string;
   onProfileClick?: (username: string) => void;
   variant?: "default" | "compact";
+  index?: number;
 }
 
 const platformAccents: Record<Platform, string> = {
@@ -30,6 +32,12 @@ const platformBadgeColors: Record<Platform, string> = {
   tiktok: "bg-gradient-to-r from-cyan-400 via-purple-400 to-pink-400",
 };
 
+const platformShadowColors: Record<Platform, string> = {
+  instagram: "rgba(236, 72, 153, 0.15)",
+  youtube: "rgba(255, 0, 0, 0.15)",
+  tiktok: "rgba(6, 182, 212, 0.15)",
+};
+
 function getPlatformIcon(platform: Platform) {
   switch (platform) {
     case "instagram":
@@ -41,12 +49,27 @@ function getPlatformIcon(platform: Platform) {
   }
 }
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 30, scale: 0.95 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      delay: i * 0.05,
+      duration: 0.4,
+      ease: "easeOut" as const,
+    },
+  }),
+};
+
 export function ProfileCard({
   profile,
   platform,
   searchQuery,
   onProfileClick,
   variant = "default",
+  index = 0,
 }: ProfileCardProps) {
   const navigate = useNavigate();
   const { addProfile, removeProfile, isProfileSaved } = useAppStore();
@@ -88,9 +111,15 @@ export function ProfileCard({
 
   if (variant === "compact") {
     return (
-      <div
+      <motion.div
+        variants={cardVariants}
+        initial="hidden"
+        animate="visible"
+        custom={index}
         onClick={handleClick}
         className="group flex items-center gap-3 p-3 rounded-xl border border-purple-500/20 hover:bg-white/10 cursor-pointer transition-all"
+        whileHover={{ scale: 1.02, x: 5 }}
+        whileTap={{ scale: 0.98 }}
       >
         <Avatar className="h-10 w-10 ring-2 ring-purple-500/20">
           <AvatarImage src={profile.picture} alt={profile.username} />
@@ -116,16 +145,27 @@ export function ProfileCard({
             {isSaved ? <Check className="h-4 w-4 text-green-400" /> : <Plus className="h-4 w-4" />}
           </Button>
         </div>
-      </div>
+      </motion.div>
     );
   }
 
   return (
-    <div
+    <motion.div
+      variants={cardVariants}
+      initial="hidden"
+      animate="visible"
+      custom={index}
       onClick={handleClick}
-      className={`group relative flex items-center gap-4 p-4 rounded-xl border bg-white/5 backdrop-blur-sm hover:bg-white/10 hover:shadow-lg hover:shadow-purple-500/10 transition-all duration-200 cursor-pointer ${platformAccents[platform]}`}
+      className={`group relative flex items-center gap-4 p-4 rounded-xl border bg-white/5 backdrop-blur-sm hover:bg-white/10 transition-all duration-200 cursor-pointer ${platformAccents[platform]}`}
       data-search={searchQuery}
+      whileHover={{
+        scale: 1.02,
+        boxShadow: `0 20px 40px ${platformShadowColors[platform]}`,
+        transition: { duration: 0.2 },
+      }}
+      whileTap={{ scale: 0.98 }}
     >
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-transparent via-purple-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       <div className="relative flex-shrink-0">
         <Avatar className="h-16 w-16 ring-2 ring-purple-500/20">
           <AvatarImage src={profile.picture} alt={profile.username} />
@@ -134,13 +174,18 @@ export function ProfileCard({
           </AvatarFallback>
         </Avatar>
         {profile.is_verified && (
-          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white text-xs shadow-lg shadow-blue-500/30">
+          <motion.span
+            className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full bg-blue-500 text-white text-xs shadow-lg shadow-blue-500/30"
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ type: "spring", stiffness: 500, delay: 0.1 }}
+          >
             ✓
-          </span>
+          </motion.span>
         )}
       </div>
 
-      <div className="flex-1 min-w-0">
+      <div className="relative flex-1 min-w-0 z-10">
         <div className="flex items-center gap-2 flex-wrap">
           <h3 className="font-bold text-white truncate font-sans">@{profile.username}</h3>
           <span
@@ -165,38 +210,42 @@ export function ProfileCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <Button
-          variant={isSaved ? "secondary" : "outline"}
-          onClick={handleAddToList}
-          className="gap-2 font-body"
-          aria-label={isSaved ? "Remove from list" : "Add to list"}
-        >
-          {isSaved ? (
-            <>
-              <Check className="h-4 w-4" />
-              <span>Saved</span>
-            </>
-          ) : (
-            <>
-              <Plus className="h-4 w-4" />
-              <span>Add to List</span>
-            </>
-          )}
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            window.open(profile.url, "_blank", "noopener,noreferrer");
-          }}
-          aria-label="View profile on platform"
-        >
-          <ExternalLink className="h-4 w-4" />
-        </Button>
+      <div className="relative flex items-center gap-2 z-10">
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            variant={isSaved ? "secondary" : "outline"}
+            onClick={handleAddToList}
+            className="gap-2 font-body"
+            aria-label={isSaved ? "Remove from list" : "Add to list"}
+          >
+            {isSaved ? (
+              <>
+                <Check className="h-4 w-4" />
+                <span>Saved</span>
+              </>
+            ) : (
+              <>
+                <Plus className="h-4 w-4" />
+                <span>Add to List</span>
+              </>
+            )}
+          </Button>
+        </motion.div>
+        <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              window.open(profile.url, "_blank", "noopener,noreferrer");
+            }}
+            aria-label="View profile on platform"
+          >
+            <ExternalLink className="h-4 w-4" />
+          </Button>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 }
