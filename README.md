@@ -1,13 +1,14 @@
 ---
-title: Wobb Influencer Search
+title: InfluencerHub
 emoji: 🔍
-colorFrom: pink
-colorTo: purple
+colorFrom: purple
+colorTo: pink
 sdk: docker
+app_port: 7860
 pinned: false
 ---
 
-# Wobb Influencer Search
+# InfluencerHub
 
 A modern, full-stack influencer search platform built with React, TypeScript, Vite, Zustand, and Tailwind CSS. Features a stunning 3D animated background with glass-morphism UI, persistent profile saving, and cross-platform search across Instagram, YouTube, and TikTok.
 
